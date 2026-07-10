@@ -1,0 +1,65 @@
+name: Android APK
+
+# Builds the WhiteIntel Android app (Capacitor thin shell over whiteintel.dev) into a
+# downloadable .apk. This machine has no JDK/Android SDK, so the build runs on GitHub's
+# ubuntu runner (which ships both). Grab the artifact from the run's "Artifacts" section.
+on:
+  push:
+    paths: ["mobile/**", ".github/workflows/mobile-apk.yml"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # publish the APK as a GitHub Release asset
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install JS deps
+        run: npm install
+
+      # The generated android/ project is gitignored (standard Capacitor practice), so
+      # regenerate it in CI from capacitor.config.ts + www, then it's build-ready.
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Rename APK to a stable name
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk WhiteIntel.apk
+
+      - name: Upload APK as a run artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: whiteintel-android-apk
+          path: mobile/WhiteIntel.apk
+          if-no-files-found: error
+
+      # Publish to the same GitHub Release the desktop installers go to, so the site's
+      # /download page can link to a permanent public APK URL.
+      - name: Publish APK to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.1.0
+          name: WhiteIntel v0.1.0
+          files: mobile/WhiteIntel.apk

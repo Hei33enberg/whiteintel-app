@@ -1,0 +1,51 @@
+name: Desktop installers
+
+# Builds the WhiteIntel Desktop app (Electron + local-RAG: sqlite-vec / llama.cpp) into
+# installers for Windows / macOS / Linux. Runs on GitHub runners which have the native
+# build toolchains this dev machine lacks. Download the installer from the run's artifacts.
+on:
+  push:
+    paths: ["desktop/**", ".github/workflows/desktop.yml"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # publish installers as GitHub Release assets
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Native deps (better-sqlite3, node-llama-cpp) compile on install via
+      # electron-builder's install-app-deps postinstall hook.
+      - name: Install deps
+        run: npm install
+
+      # Build + publish to the GitHub Release (tag v<version> from package.json) so the
+      # site's /download page can link to permanent, public installer URLs.
+      - name: Build + publish installer
+        run: npm run build && npx electron-builder --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installers as run artifacts too
+        uses: actions/upload-artifact@v4
+        with:
+          name: whiteintel-desktop-${{ matrix.os }}
+          path: |
+            desktop/release/*.exe
+            desktop/release/*.dmg
+            desktop/release/*.AppImage
+          if-no-files-found: warn

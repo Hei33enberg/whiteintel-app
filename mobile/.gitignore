@@ -1,0 +1,16 @@
+node_modules/
+# Capacitor-generated native project trees — regenerated via `npm run init:android` /
+# `init:ios`. Once you've customized them (signing, icons, etc.) you'll want to
+# commit specific subpaths; for now we keep them out of source control.
+android/
+ios/
+# Build outputs
+*.apk
+*.aab
+*.ipa
+DerivedData/
+*.log
+.DS_Store
+.idea/
+.gradle/
+local.properties

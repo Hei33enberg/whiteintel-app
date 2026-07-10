@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>WhiteIntel</title>
+    <style>
+      :root {
+        --paper: #f4ede1;
+        --ink: #1a1612;
+        --ink-soft: #5b5247;
+        --amber: #d49b3c;
+      }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+      body { display: flex; align-items: center; justify-content: center; padding: env(safe-area-inset-top, 0) 24px env(safe-area-inset-bottom, 0); }
+      .card { text-align: center; max-width: 320px; }
+      .logo { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-weight: 700; background: var(--ink); color: var(--paper); padding: 4px 10px; display: inline-block; font-size: 14px; }
+      h1 { font-size: 22px; margin: 18px 0 8px; }
+      p { color: var(--ink-soft); line-height: 1.55; }
+      .pulse { display: inline-block; height: 8px; width: 8px; border-radius: 50%; background: var(--amber); margin-right: 8px; animation: p 1.4s ease-in-out infinite; }
+      @keyframes p { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+      .retry { display: none; margin-top: 16px; border: 1px solid var(--ink); background: var(--amber); color: var(--ink); padding: 8px 16px; font-weight: 600; font: inherit; cursor: pointer; }
+      .retry.show { display: inline-block; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <span class="logo">WI</span>
+      <h1>WhiteIntel</h1>
+      <p id="msg"><span class="pulse"></span>Connecting…</p>
+      <button class="retry" id="retry" onclick="location.reload()">Retry</button>
+    </div>
+    <script>
+      // Offline fallback: when the device has no network, Capacitor falls back
+      // to this stub instead of whiteintel.dev. Show a clear retry path.
+      function check() {
+        if (!navigator.onLine) {
+          document.getElementById('msg').textContent = "You're offline. WhiteIntel needs a connection — corpus + AI live in the cloud.";
+          document.getElementById('retry').classList.add('show');
+        }
+      }
+      window.addEventListener('online', () => location.reload());
+      window.addEventListener('load', check);
+      // If we're online but the server.url load hasn't taken over within 3s,
+      // surface a retry button anyway.
+      setTimeout(() => { if (navigator.onLine) document.getElementById('retry').classList.add('show'); }, 3000);
+    </script>
+  </body>
+</html>

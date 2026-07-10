@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'" />
+    <title>WhiteIntel — Private Cases</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <!-- First-run setup overlay — covers the app until models are ready. -->
+    <div id="setup" class="overlay" hidden>
+      <div class="setup-card">
+        <div class="brand-lg">
+          <span class="logo">WI</span>
+          <span>WhiteIntel</span>
+        </div>
+        <h2>Setting up the local AI engine</h2>
+        <p class="lede">
+          One-time download (~2.2 GB) of the bundled chat + embedding models. Everything
+          runs <strong>on this machine</strong> after this — no servers, no accounts,
+          no third-party AI for your private cases.
+        </p>
+        <div id="setup-progress" class="progress-list"></div>
+        <div class="setup-actions">
+          <button id="start-download" class="btn primary">Download &amp; install</button>
+          <button id="cancel-download" class="btn" hidden>Cancel</button>
+          <a href="#" id="setup-open-cloud" class="link">Use the cloud version meanwhile ↗</a>
+        </div>
+        <p class="hint" id="setup-hint"></p>
+      </div>
+    </div>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">WI</span>
+        <span class="t1">WhiteIntel</span>
+        <span class="t2">— Private Cases · local AI</span>
+      </div>
+      <div class="status">
+        <span id="engine-pill" class="pill">Engine: checking…</span>
+        <a href="#" id="open-cloud" class="link">Cloud (whiteintel.dev) ↗</a>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="section-head">
+          <span>Cases</span>
+          <button id="new-case" class="btn-small">+ New</button>
+        </div>
+        <ul id="cases" class="cases"></ul>
+      </aside>
+
+      <section class="panel">
+        <div id="empty" class="empty">
+          <h2>Select a case or create one.</h2>
+          <p>Drop PDFs / TXT / MD, then ask grounded questions. Everything stays on this machine.</p>
+        </div>
+
+        <div id="workspace" hidden>
+          <header class="ws-head">
+            <h1 id="case-name">—</h1>
+            <div class="ws-meta">
+              <span id="case-meta"></span>
+              <button id="delete-case" class="btn-ghost danger">Delete case</button>
+            </div>
+          </header>
+
+          <div class="cols">
+            <div class="col">
+              <div class="section-head">
+                <span>Documents</span>
+                <button id="add-docs" class="btn">+ Add documents</button>
+              </div>
+              <ul id="docs" class="docs"></ul>
+              <p class="hint" id="ingest-hint" hidden></p>
+            </div>
+
+            <div class="col">
+              <div class="section-head">
+                <span>Ask the case</span>
+                <span class="model-tag" id="model-tag">local · qwen2.5-3b</span>
+              </div>
+              <div id="answer" class="answer"></div>
+              <div id="hits" class="hits"></div>
+              <form id="ask-form" class="ask">
+                <textarea id="q" rows="2" placeholder="e.g. Who is the ultimate beneficial owner? Which jurisdictions appear in the memo?"></textarea>
+                <button class="btn primary" id="ask-btn" type="submit">Ask</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+appId: dev.whiteintel.desktop
+productName: WhiteIntel
+copyright: Copyright © 2026 WhiteIntel
+directories:
+  output: release
+  buildResources: build
+publish:
+  provider: github
+  owner: Hei33enberg
+  # PUBLIC downloads-only repo — its default GITHUB_TOKEN can publish here (same repo),
+  # so no cross-repo PAT is needed. The private source repos stay private.
+  repo: whiteintel-app
+  releaseType: release
+files:
+  - dist/**/*
+  - package.json
+  - "!node_modules/**/{CHANGELOG.md,README.md,readme.md,test,tests,__tests__,*.map}"
+asar: true
+# Native modules (better-sqlite3, sqlite-vec) must be unpacked from asar — they
+# load .node binaries that can't be read from inside the archive.
+asarUnpack:
+  - "**/node_modules/better-sqlite3/**"
+  - "**/node_modules/sqlite-vec/**"
+  - "**/node_modules/bindings/**"
+  - "**/node_modules/file-uri-to-path/**"
+  - "**/node_modules/node-llama-cpp/**"
+  - "**/node_modules/@node-llama-cpp/**"
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  artifactName: WhiteIntel-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+
+mac:
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  category: public.app-category.productivity
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  artifactName: WhiteIntel-${version}-${arch}.${ext}
+
+linux:
+  target:
+    - target: AppImage
+      arch: [x64]
+  category: Office
+  artifactName: WhiteIntel-${version}.${ext}
