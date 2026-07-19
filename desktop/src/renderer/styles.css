@@ -12,6 +12,7 @@
   --mono: ui-monospace, "SF Mono", Consolas, "Liberation Mono", monospace;
   --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
+[hidden] { display: none !important; }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--paper); color: var(--ink); font-family: var(--sans); }
 button, input, textarea, select { font: inherit; color: inherit; }

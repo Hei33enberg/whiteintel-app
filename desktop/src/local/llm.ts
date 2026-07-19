@@ -18,9 +18,11 @@ let _chatCtx: Context | null = null;
 let _embedModel: Model | null = null;
 let _embedCtx: EmbedContext | null = null;
 
-// node-llama-cpp is ESM-only in v3 — dynamic import keeps our CJS bundle happy.
+// node-llama-cpp is ESM-only in v3. Since this TS project outputs CommonJS,
+// a bare import() gets transpiled to require(). We use the Function constructor
+// to force node to evaluate a native dynamic import at runtime.
 async function nlc() {
-  return await import("node-llama-cpp");
+  return await new Function('return import("node-llama-cpp")')();
 }
 
 async function llama(): Promise<Llama> {

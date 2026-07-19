@@ -40,6 +40,12 @@ mac:
   target:
     - target: dmg
       arch: [arm64, x64]
+    # electron-updater applies macOS updates from a ZIP referenced in latest-mac.yml — a
+    # dmg-only build produces nothing the updater can consume. (Mac auto-update ALSO needs a
+    # Developer ID signature; until that's wired the zip is unsigned and Squirrel.Mac won't
+    # apply it — but the target must exist for signed builds to auto-update later.)
+    - target: zip
+      arch: [arm64, x64]
   category: public.app-category.productivity
   hardenedRuntime: true
   gatekeeperAssess: false

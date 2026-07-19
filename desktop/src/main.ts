@@ -3,9 +3,27 @@
 // the preload exposes via contextBridge as `window.whiteintelDesktop`.
 import { app, BrowserWindow, ipcMain, shell, Menu } from "electron";
 import path from "node:path";
+import electronUpdater from "electron-updater";
 import { handlers } from "./local/handlers.js";
 
 const isDev = !app.isPackaged;
+
+// In-app auto-update. electron-updater reads app-update.yml (baked from electron-builder.yml's
+// github publish block: Hei33enberg/whiteintel-app) and checks that release feed. Only runs in a
+// packaged build — never in dev — and is best-effort: a failed/absent check must never block the
+// app. `checkForUpdatesAndNotify` downloads a newer version in the background and prompts the user
+// to restart into it, so installed users actually receive future releases instead of re-downloading.
+function initAutoUpdate() {
+  if (isDev) return;
+  try {
+    const { autoUpdater } = electronUpdater;
+    autoUpdater.autoDownload = true;
+    autoUpdater.on("error", (err) => console.error("[autoUpdate]", err?.message ?? err));
+    void autoUpdater.checkForUpdatesAndNotify();
+  } catch (err) {
+    console.error("[autoUpdate] init failed", err);
+  }
+}
 
 async function createWindow() {
   const win = new BrowserWindow({
@@ -102,6 +120,7 @@ function buildMenu() {
 app.whenReady().then(() => {
   registerHandlers();
   buildMenu();
+  initAutoUpdate();
   void createWindow();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) void createWindow();

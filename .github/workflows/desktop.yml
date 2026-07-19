@@ -34,9 +34,12 @@ jobs:
         run: npm install
 
       # Build + publish to the GitHub Release (tag v<version> from package.json) so the
-      # site's /download page can link to permanent, public installer URLs.
+      # site's /download page can link to permanent, public installer URLs. Publish ONLY from
+      # the PUBLIC whiteintel-app repo — its same-repo GITHUB_TOKEN can create the release +
+      # the electron-updater feed (latest*.yml). In the private source repo the token can't
+      # publish cross-repo (that 403'd every v0.1.1 build), so there we only build.
       - name: Build + publish installer
-        run: npm run build && npx electron-builder --publish always
+        run: npm run build && npx electron-builder --publish ${{ github.repository == 'Hei33enberg/whiteintel-app' && 'always' || 'never' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
