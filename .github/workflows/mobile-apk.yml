@@ -59,6 +59,13 @@ jobs:
       - name: Add Android platform
         run: npx cap add android
 
+      # Generate ALL launcher/splash assets from mobile/resources/icon.png + splash.png.
+      # WITHOUT this, cap add ships Capacitor default icons — the generic C on turquoise
+      # (v0.1.4 bug: user home-screen icon changed from custom to default). The
+      # @capacitor/assets devDep is already in mobile/package.json.
+      - name: Generate app icons + splash from resources/
+        run: npx @capacitor/assets generate --android
+
       # android/ is freshly regenerated (versionCode 1 / versionName "1.0" scaffold defaults),
       # so stamp the real version into it before building.
       - name: Stamp versionCode / versionName
