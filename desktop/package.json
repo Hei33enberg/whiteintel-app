@@ -1,8 +1,8 @@
 {
   "name": "whiteintel-desktop",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
-  "description": "WhiteIntel Desktop — private local-RAG companion to whiteintel.dev (Ollama + sqlite-vec, never leaves the machine).",
+  "description": "WhiteIntel Desktop â€” private local-RAG companion to whiteintel.dev (Ollama + sqlite-vec, never leaves the machine).",
   "main": "dist/main.js",
   "scripts": {
     "build:main": "tsc -p tsconfig.json",
