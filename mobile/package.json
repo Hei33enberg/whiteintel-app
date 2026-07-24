@@ -1,6 +1,6 @@
 {
   "name": "whiteintel-mobile",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "description": "WhiteIntel for Android + iOS — Capacitor 6 native shell over whiteintel.dev. Local-RAG on mobile is roadmapped for v0.2.",
   "scripts": {
